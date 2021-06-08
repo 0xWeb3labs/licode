@@ -35,6 +35,54 @@ window.onload = () => {
     console.log(token);
     room = Erizo.Room({ token });
 
+    localStream.addEventListener('access-denied', function(event) {
+      printText("Access to webcam and/or microphone rejected");
+      const subscribeToStreams = (streams) => {
+        streams.forEach((stream) => {
+          if (localStream.getID() !== stream.getID()) {
+            room.subscribe(stream);
+          }
+        });
+      };
+      room.addEventListener('room-connected', (roomEvent) => {
+        printText('Connected to the room OK');
+        room.publish(localStream, { maxVideoBW: 300, handlerProfile: 0 });
+        subscribeToStreams(roomEvent.streams);
+
+      });
+
+      room.addEventListener('stream-subscribed', (streamEvent) => {
+        printText('Subscribed to your local stream OK');
+        const stream = streamEvent.stream;
+        stream.show('my_subscribed_video');
+      });
+
+      room.addEventListener('stream-added', (streamEvent) => {
+        printText('Local stream published OK');
+        const streams = [];
+        streams.push(streamEvent.stream);
+        subscribeToStreams(streams);
+      });
+
+      room.addEventListener('stream-removed', (streamEvent) => {
+        // Remove stream from DOM
+        const stream = streamEvent.stream;
+        if (stream.elementID !== undefined) {
+          const element = document.getElementById(stream.elementID);
+          document.body.removeChild(element);
+        }
+      });
+
+      room.addEventListener('stream-failed', () => {
+        console.log('STREAM FAILED, DISCONNECTION');
+        printText('STREAM FAILED, DISCONNECTION');
+        room.disconnect();
+      });
+      room.connect({ singlePC: true });
+//      localStream.show('my_local_video');
+
+    });
+
     localStream.addEventListener('access-accepted', () => {
       printText('Mic and Cam OK');
       const subscribeToStreams = (streams) => {
