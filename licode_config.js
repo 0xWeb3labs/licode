@@ -25,12 +25,12 @@ config.cloudProvider.name = '';
 config.nuve = {};
 config.nuve.dataBaseURL = "mongodb://localhost/nuvedb"; // default value: "mongodb://localhost/nuvedb"
 config.nuve.dataBaseName = 'nuvedb'; // default value: 'nuvedb'
-config.nuve.superserviceID = '60b89ea7303459f357f58ad7'; // default value: ''
-config.nuve.superserviceKey = '30634'; // default value: ''
+config.nuve.superserviceID = '60b90bf49a80e18de6fe0bf5'; // default value: ''
+config.nuve.superserviceKey = '1168'; // default value: ''
 config.nuve.testErizoController = 'localhost:8080'; // default value: 'localhost:8080'
 // Nuve Cloud Handler policies are in nuve/nuveAPI/ch_policies/ folder
 config.nuve.cloudHandlerPolicy = 'default_policy.js'; // default value: 'default_policy.js'
-config.nuve.port = 3300; // default value: 3000
+config.nuve.port = 3000; // default value: 3000
 
 
 /*********************************************************
@@ -51,6 +51,7 @@ config.erizoController = {};
 //     "credential": password,
 //     "url": url
 // }
+//config.erizoController.iceServers = [{'url': 'stun:192.168.1.7:3478'}]; // default value: [{'url': 'stun:stun.l.google.com:19302'}]
 config.erizoController.iceServers = [{'url': 'stun:gfax.net:3478'},{'url':'turn:gfax.net:3478','username':'allcom','credential':'allcompass'}]; // default value: [{'url': 'stun:stun.l.google.com:19302'}]
 //config.erizoController.iceServers = [{'url': 'stun:stun.l.google.com:19302'}]; // default value: [{'url': 'stun:stun.l.google.com:19302'}]
 
@@ -60,12 +61,12 @@ config.erizoController.maxVideoBW = 300; //default value: 300
 
 // Public erizoController IP for websockets (useful when behind NATs)
 // Use '' to automatically get IP from the interface
-config.erizoController.publicIP = '192.168.0.172'; //default value: ''
+config.erizoController.publicIP = '192.168.0.183'; //default value: ''
 config.erizoController.networkinterface = 'eth0'; //default value: ''
 
 // This configuration is used by the clients to reach erizoController
 // Use '' to use the public IP address instead of a hostname
-config.erizoController.hostname = 'licode.callpass.cn'; //default value: ''
+config.erizoController.hostname = 'sfu.callpass.cn'; //default value: ''
 config.erizoController.port = 8080; //default value: 8080
 // Use true if clients communicate with erizoController over SSL
 config.erizoController.ssl = true; //default value: false
@@ -77,8 +78,8 @@ config.erizoController.listen_port = 8080; //default value: 8080
 
 // Custom location for SSL certificates. Default located in /cert
 //config.erizoController.ssl_key = '/full/path/to/ssl.key';
-config.erizoController.ssl_key = '/app/licode/cert/callpass.cn.key';
-config.erizoController.ssl_cert = '/app/licode/cert/fullchain.cer';
+config.erizoController.ssl_key = '/sfu/licode/cert/callpass.cn.key';
+config.erizoController.ssl_cert = '/sfu/licode/cert/fullchain.cer';
 //config.erizoController.ssl_cert = '/full/path/to/ssl.crt';
 //config.erizoController.sslCaCerts = ['/full/path/to/ca_cert1.crt', '/full/path/to/ca_cert2.crt'];
 
@@ -131,7 +132,7 @@ config.erizoAgent.prerunProcesses = 1; // default value: 1
 
 // Public erizoAgent IP for ICE candidates (useful when behind NATs)
 // Use '' to automatically get IP from the interface
-config.erizoAgent.publicIP = '192.168.0.172'; //default value: ''
+config.erizoAgent.publicIP = '192.168.0.183'; //default value: ''
 config.erizoAgent.networkinterface = 'eth0'; //default value: ''
 
 // Use the name of the inferface you want to bind for ICE candidates
@@ -142,7 +143,7 @@ config.erizoAgent.networkinterface = 'eth0'; //default value: ''
 config.erizoAgent.useIndividualLogFiles = false;
 
 // If true this Agent will launch Debug versions of ErizoJS
-config.erizoAgent.launchDebugErizoJS = false;
+config.erizoAgent.launchDebugErizoJS = true;
 
 // If true this Agent will log also nICEr logs
 config.erizoAgent.enableNicerLogs = true; // default value: true
@@ -191,8 +192,8 @@ config.erizo.turnpass = 'allcompass';
 config.erizo.networkinterface = 'eth0'; //default value: ''
 
 //note, this won't work with all versions of libnice. With 0 all the available ports are used
-config.erizo.minport = 0; // default value: 0
-config.erizo.maxport = 0; // default value: 0
+config.erizo.minport = 30000; // default value: 0
+config.erizo.maxport = 30050; // default value: 0
 
 config.erizo.useConnectionQualityCheck = true; // default value: false
 
@@ -217,7 +218,7 @@ config.rov.statsPrefix = "licode_";
 config.basicExample = {};
 config.basicExample.port = 3004;  // default value: 3001
 config.basicExample.tlsPort = 3001; // default value: 3004
-config.basicExample.nuveUrl = 'http://localhost:3300/';
+config.basicExample.nuveUrl = 'http://localhost:3000/';
 //config.basicExample.nuveUrl = 'https://licode.callpass.cn:3300/';
 config.basicExample.logger = {};
 config.basicExample.logger.configFile = './log4js_configuration.json'; // default value: "./log4js_configuration.json"
