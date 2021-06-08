@@ -39,13 +39,17 @@ window.onload = () => {
       printText('Mic and Cam OK');
       const subscribeToStreams = (streams) => {
         streams.forEach((stream) => {
-          room.subscribe(stream);
+          if (localStream.getID() !== stream.getID()) {
+            room.subscribe(stream);
+          }
         });
       };
 
-      room.addEventListener('room-connected', () => {
+      room.addEventListener('room-connected', (roomEvent) => {
         printText('Connected to the room OK');
         room.publish(localStream, { maxVideoBW: 300, handlerProfile: 0 });
+        subscribeToStreams(roomEvent.streams);
+
       });
 
       room.addEventListener('stream-subscribed', (streamEvent) => {

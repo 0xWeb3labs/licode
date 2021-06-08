@@ -18,7 +18,7 @@ const configFlags = {
   type: 'erizo', // room type
   onlyAudio: false,
   mediaConfiguration: 'default',
-  onlySubscribe: false,
+  onlySubscribe: true,
   onlyPublish: false,
   autoSubscribe: false,
   simulcast: false,
@@ -213,6 +213,11 @@ const startBasicExample = () => {
       localStream.addEventListener('access-accepted', () => {
         room.connect({ singlePC: configFlags.singlePC });
         localStream.show('myVideo');
+      });
+      localStream.addEventListener('access-denied', () => {
+//        room.connect({ singlePC: configFlags.singlePC });
+//        localStream.show('myVideo');
+        console.log("access-denied");
       });
       localStream.init();
     }
