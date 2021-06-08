@@ -52,9 +52,9 @@ window.onload = () => {
       });
 
       room.addEventListener('stream-subscribed', (streamEvent) => {
-        printText('Subscribed to your local stream OK');
         const stream = streamEvent.stream;
         stream.show('my_subscribed_video');
+        printText('Subscribed to your local stream OK:'+stream.hasAudio()+','+stream.hasVideo()+':'+stream.getID());
       });
 
       room.addEventListener('stream-added', (streamEvent) => {
@@ -80,6 +80,7 @@ window.onload = () => {
       });
       room.connect({ singlePC: true });
 //      localStream.show('my_local_video');
+      document.getElementById('my_local_video').hidden=true
 
     });
 
