@@ -72,8 +72,9 @@ app.use((req, res, next) => {
 // app.set('views', __dirname + '/../views/');
 // disable layout
 // app.set("view options", {layout: false});
-
+console.log(config.nuve.superserviceID, config.nuve.superserviceKey,config.basicExample.nuveUrl);
 N.API.init(config.nuve.superserviceID, config.nuve.superserviceKey, config.basicExample.nuveUrl);
+console.log("init done");
 
 let defaultRoom;
 const defaultRoomName = 'basicExampleRoom';

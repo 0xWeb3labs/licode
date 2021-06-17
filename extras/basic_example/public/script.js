@@ -4,6 +4,7 @@
 /* eslint-env browser */
 /* eslint-disable no-param-reassign, no-console */
 
+//const serverUrl = 'https://t.callt.net:8030/';
 const serverUrl = '/';
 let localStream;
 let room;
@@ -118,6 +119,7 @@ const startBasicExample = () => {
       }
     };
 
+    console.log(url);
     req.open('POST', url, true);
     req.setRequestHeader('Content-Type', 'application/json');
     req.send(JSON.stringify(roomData));
