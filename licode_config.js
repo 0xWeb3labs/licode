@@ -78,8 +78,8 @@ config.erizoController.listen_port = 8030; //default value: 8080
 
 // Custom location for SSL certificates. Default located in /cert
 //config.erizoController.ssl_key = '/full/path/to/ssl.key';
-config.erizoController.ssl_key = '/home/club/app/licode/cert/callpass.cn.key';
-config.erizoController.ssl_cert = '/home/club/app/licode/cert/fullchain.cer';
+config.erizoController.ssl_key = '../../../licode/cert/callpass.cn.key';
+config.erizoController.ssl_cert = '../../../licode/cert/fullchain.cer';
 //config.erizoController.ssl_cert = '/full/path/to/ssl.crt';
 //config.erizoController.sslCaCerts = ['/full/path/to/ca_cert1.crt', '/full/path/to/ca_cert2.crt'];
 

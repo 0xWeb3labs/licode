@@ -180,8 +180,15 @@ class Client extends events.EventEmitter {
         });
       }
     };
-    this.room.controller.processConnectionMessageFromClient(options.erizoId, this.id,
-      options.connectionId, options.msg, callback.bind(this));
+    if (options && options.erizoId && options.connectionId && options.msg) {
+      this.room.controller.processConnectionMessageFromClient(options.erizoId, this.id,
+        options.connectionId, options.msg, callback.bind(this));
+    }
+    else {
+      this.sendMessage('connection_message_erizo failed ', options);
+      return;
+    }
+
     cb();
   }
 
@@ -385,6 +392,17 @@ class Client extends events.EventEmitter {
       callback(null, 'Unauthorized');
       return;
     }
+    else
+      if (!options || !options.state || options.state === undefined || options.state == null) {
+      log.warn('debug: iosapp, ',
+        'reason: onPublish',
+        options?logger.objectToLog(options):'no options');
+      if (callback)
+        callback(null, 'Unauthorized');
+        this.sendMessage('publish_failed', { type: 'subscribe',
+          options: options });
+      return;
+    }
 
     // generate a 18 digits safe integer
     const id = Math.floor(100000000000000000 + (Math.random() * 900000000000000000));
@@ -404,14 +422,22 @@ class Client extends events.EventEmitter {
       return;
     }
 
-    const stream = this.room.streamManager.getPublishedStreamById(options.streamId);
-    if (stream === undefined) {
+    log.warn('debug: iosapp, ',
+      'reason: onSubscribe',
+      logger.objectToLog(options));
+    const stream = (options && options.streamId)?this.room.streamManager.getPublishedStreamById(options.streamId):null;
+    if (stream === undefined || stream == null) {
       log.warn('message: addSubscriber can not be requested, ',
         'reason: publisher not found',
-        `streamId: ${options.streamId}, `,
+        options && options.streamId?`streamId: ${options.streamId}, `:'streamId:UNKOWN',
         `clientId: ${this.id},`,
         logger.objectToLog(options),
-        logger.objectToLog(options.metadata));
+        options && options.metadata?logger.objectToLog(options.metadata):'no metadata');
+      if (callback)
+        callback(null, 'Unauthorized');
+      this.sendMessage('subscrible_failed', { type: 'subscribe',
+        options: options });
+
       return;
     }
     if (stream.hasData() && options.data !== false) {

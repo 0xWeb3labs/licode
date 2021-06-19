@@ -17,10 +17,10 @@ FAST_MAKE=''
 gcc_version=0
 
 check_version(){
-  if [[ $(lsb_release -rs) == "18.04" ]] || [[ $(lsb_release -rs) == "20.04" ]] 
-  then 
+  if [[ $(lsb_release -rs) == "18.04" ]] || [[ $(lsb_release -rs) == "20.04" ]]
+  then
      gcc_version=7
-  else 
+  else
      gcc_version=5
   fi
 }
@@ -94,24 +94,28 @@ install_apt_deps(){
   sudo apt-get update -y
   check_version
   echo "Installing gcc $gcc_version"
-  sudo apt-get install -qq git make gcc-$gcc_version g++-$gcc_version python3-pip libssl-dev cmake pkg-config liblog4cxx-dev rabbitmq-server curl autoconf libtool automake -y
+  proxychains sudo apt-get install -qq git make gcc-$gcc_version g++-$gcc_version python3-pip libssl-dev cmake pkg-config liblog4cxx-dev rabbitmq-server curl autoconf libtool automake -y
   sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-$gcc_version 60 --slave /usr/bin/g++ g++ /usr/bin/g++-$gcc_version
   echo "done"
-  
+
 
   sudo chown -R `whoami` ~/.npm ~/tmp/ || true
 }
 
 install_mongodb(){
-  if [ -d $LIB_DIR ]; then
+    if [ -a $LIB_DIR/mongodb-linux-x86_64-ubuntu2004-4.4.4.tgz ]; then
+        echo $LIB_DIR/mongodb-linux-x86_64-ubuntu2004-4.4.4.tgz exist
+    else
+    if [ -d $LIB_DIR ]; then
     echo "Installing mongodb-org from tar"
     sudo apt-get install -y libcurl4 openssl liblzma5
-    wget -P $LIB_DIR https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-4.4.4.tgz
-    tar -zxvf $LIB_DIR/mongodb-linux-x86_64-ubuntu2004-4.4.4.tgz -C $LIB_DIR
-    sudo ln -s $LIB_DIR/mongodb-linux-x86_64-ubuntu2004-4.4.4/bin/* /usr/local/bin/
+        wget -P $LIB_DIR https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-ubuntu2004-4.4.4.tgz
+        tar -zxvf $LIB_DIR/mongodb-linux-x86_64-ubuntu2004-4.4.4.tgz -C $LIB_DIR
+        sudo ln -s $LIB_DIR/mongodb-linux-x86_64-ubuntu2004-4.4.4/bin/* /usr/local/bin/
   else
     mkdir -p $LIB_DIR
     install_mongodb
+  fi
   fi
 }
 
