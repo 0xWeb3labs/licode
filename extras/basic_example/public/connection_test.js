@@ -12,7 +12,7 @@ function printText(text) {
 }
 
 window.onload = () => {
-  const config = { audio: true, video: true, data: true, videoSize: [640, 480, 640, 480] };
+  const config = { audio: true, video: true, data: true, videoSize: [640, 480, 640, 480],attributes: {nickname:"kadweb"+Math.random() }};
   localStream = Erizo.Stream(config);
   const createToken = (userName, role, callback) => {
     const req = new XMLHttpRequest();
@@ -105,6 +105,7 @@ window.onload = () => {
         printText('Subscribed to your local stream OK');
         const stream = streamEvent.stream;
         stream.show('my_subscribed_video');
+        console.log('stream-subscribed:'+streamEvent.stream.getID());
       });
 
       room.addEventListener('stream-added', (streamEvent) => {
@@ -112,6 +113,8 @@ window.onload = () => {
         const streams = [];
         streams.push(streamEvent.stream);
         subscribeToStreams(streams);
+        console.log('stream-added:'+streamEvent.stream.getID());
+        printText('stream-added:'+streamEvent.stream.getID());
       });
 
       room.addEventListener('stream-removed', (streamEvent) => {

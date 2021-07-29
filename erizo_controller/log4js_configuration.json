@@ -1,7 +1,8 @@
 {
   "appenders": [
     {
-      "type": "console",
+      "type": "file",
+      "filename": "erizo_controller.log",
       "layout": {
         "type": "pattern",
         "pattern": "%d  - %p: %c - %m",

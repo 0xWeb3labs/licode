@@ -216,6 +216,16 @@ exports.ErizoJSController = (erizoJSId, threadPool, ioThreadPool) => {
         `clientId: ${clientId}, connectionId: ${connectionId}`);
       error = 'connection-not-found';
     }
+    else
+    if (msg)
+    if (msg.type === 'offer' || msg.type === 'answer')
+      log.info('message: IOS, msg type:' + (msg.type));
+    else
+    {
+      log.info('message: IOS, msg:' + JSON.stringify(msg));
+      log.info('message: IOS, options' + JSON.stringify(client.options));
+    }
+
 
     if (error) {
       callbackRpc('callback', { error });

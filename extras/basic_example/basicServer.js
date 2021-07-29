@@ -12,7 +12,7 @@ const N = require('./nuve');
 const fs = require('fs');
 const https = require('https');
 // eslint-disable-next-line import/no-unresolved
-const config = require('./../../licode_config');
+const config = require('./../../licode_config_mac');
 
 config.erizoController.ssl_key = config.erizoController.ssl_key || '../../cert/key.pem';
 config.erizoController.ssl_cert = config.erizoController.ssl_cert || '../../cert/cert.pem';

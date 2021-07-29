@@ -6,11 +6,18 @@
   </head>
 
   <body>
+  <h3>Press the start buttong to start receiving streams from the default room or</h3>
     <button id="startButton" onclick="startBasicExample()" disabled>Start</button>
     <button id="testConnection" onclick="testConnection()">Test Connection</button>
     <button id="recordButton" onclick="startRecording()" disabled>Toggle Recording</button>
     <button id="slideShowMode" onclick="toggleSlideShowMode()" disabled>Toggle Slide Show Mode</button>
-    <h1 id="startWarning">Press the start buttong to start receiving streams</h1>
+    <h1 id="startWarning">select one room from the following list </h1>
+    <dl id="roomlist"> Room List
+      <dt>Coffee</dt>
+      <dd>Black hot drink</dd>
+      <dt>Milk</dt>
+      <dd>White cold drink</dd>
+    </dl>
     <div id="videoContainer"></div>
   </body>
 </html>

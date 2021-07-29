@@ -99,7 +99,7 @@ const startBasicExample = () => {
     video: !configFlags.onlyAudio,
     data: true,
     screen: configFlags.screen,
-    attributes: {} };
+    attributes: {nickname:"web"+Math.random()} };
   // If we want screen sharing we have to put our Chrome extension id.
   // The default one only works in our Lynckia test servers.
   // If we are not using chrome, the creation of the stream will fail regardless.
@@ -179,6 +179,7 @@ const startBasicExample = () => {
 
       document.getElementById('videoContainer').appendChild(div);
       stream.show(`test${stream.getID()}`);
+      console.log(stream.getID()+':'+JSON.stringify(stream.getAttributes()));
     });
 
     room.addEventListener('stream-added', (streamEvent) => {
