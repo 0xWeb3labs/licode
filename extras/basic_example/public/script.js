@@ -181,10 +181,17 @@ const startBasicExample = () => {
       stream.show(`test${stream.getID()}`);
       console.log(stream.getID()+':'+JSON.stringify(stream.getAttributes()));
     });
-
+    room.addEventListener('user_connection', (event) => {
+      console.log('user_connection:'+':'+JSON.stringify(event));
+    });
+    room.on('user_connection', (event) => {
+      console.log('on user_connection:'+':'+JSON.stringify(event));
+    });
     room.addEventListener('stream-added', (streamEvent) => {
       const streams = [];
       streams.push(streamEvent.stream);
+      const stream = streamEvent.stream;
+      console.log("strean-added"+stream.getID()+':'+JSON.stringify(stream.getAttributes()));
       if (localStream) {
         localStream.setAttributes({ type: 'publisher' });
       }

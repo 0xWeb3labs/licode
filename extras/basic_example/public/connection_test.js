@@ -12,7 +12,7 @@ function printText(text) {
 }
 
 window.onload = () => {
-  const config = { audio: true, video: true, data: true, videoSize: [640, 480, 640, 480],attributes: {nickname:"kadweb"+Math.random() }};
+  const config = { audio: true, video: true, data: true, videoSize: [640, 480, 640, 480],attributes: {actualName:"KADWEB"+Math.round(Math.random()*100), name:"Test Connection "+Math.round(Math.random()*128) }};
   localStream = Erizo.Stream(config);
   const createToken = (userName, role, callback) => {
     const req = new XMLHttpRequest();
@@ -91,6 +91,8 @@ window.onload = () => {
           if (localStream.getID() !== stream.getID()) {
             room.subscribe(stream);
           }
+          else
+            stream.setAttributes({name:'KKKKK',actualName: 'TEst',nickname: 'KAD'});
         });
       };
 
@@ -98,7 +100,7 @@ window.onload = () => {
         printText('Connected to the room OK');
         room.publish(localStream, { maxVideoBW: 300, handlerProfile: 0 });
         subscribeToStreams(roomEvent.streams);
-
+        localStream.setAttributes({name:'KKK',actualName: 'TEst',nickname: 'KAD'});
       });
 
       room.addEventListener('stream-subscribed', (streamEvent) => {
