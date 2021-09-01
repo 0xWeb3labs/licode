@@ -125,7 +125,7 @@ const startBasicExample = () => {
     req.send(JSON.stringify(roomData));
   };
 
-  const roomData = { username: `user ${parseInt(Math.random() * 100, 10)}`,
+  const roomData = { username: `用户 ${parseInt(Math.random() * 100, 10)}`,
     role: 'presenter',
     room: configFlags.room,
     type: configFlags.type,
