@@ -1,23 +1,33 @@
 <html>
   <head>
-    <title>Licode Basic Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>Kademlia Web For Testing</title>
     <script type="text/javascript" src="erizo.js"></script>
     <script type="text/javascript" src="script.js"></script>
   </head>
 
   <body>
-  <h3>Press the start buttong to start receiving streams from the default room or</h3>
-    <button id="startButton" onclick="startBasicExample()" disabled>Start</button>
-    <button id="testConnection" onclick="testConnection()">Test Connection</button>
-    <button id="recordButton" onclick="startRecording()" disabled>Toggle Recording</button>
-    <button id="slideShowMode" onclick="toggleSlideShowMode()" disabled>Toggle Slide Show Mode</button>
-    <h1 id="startWarning">select one room from the following list </h1>
-    <dl id="roomlist"> Room List
-      <dt>Coffee</dt>
-      <dd>Black hot drink</dd>
-      <dt>Milk</dt>
-      <dd>White cold drink</dd>
-    </dl>
-    <div id="videoContainer"></div>
+  <h3 style="text-align: center">Conference Room for Communities</h3>
+  <p style="text-align: center">DEFI, NFT and blockchains</p>
+  <p>Press the start buttong to start receiving streams from the default room</p>
+    <button id="startButton" onclick="startBasicExample()" style="width: 20%;background:lightseagreen;color:white;padding: 5px" disabled>Start</button>
+    <button id="testConnection" onclick="testConnection()" style="width: 20%;padding: 5px;padding: 5px" >Publish</button>
+    <button id="recordButton" onclick="startRecording()" style="width: 20%;padding: 5px" disabled>Recording</button>
+    <button id="slideShowMode" onclick="toggleSlideShowMode()"  style="width: 20%;padding: 5px" disabled>Slide Show</button>
+  <p>Speakers in the ROOM:</p>
+  <div id="videoContainer" style="background:lightcyan;width:100%;min-height: 110px"></div>
+
+  <h3><a href="https://testflight.apple.com/join/IkiPHL8a" target="_blank">IOS App available for Testflight</a></h3>
+    <img src="iphonekad.png" style="width: 200px;padding-left: 20%">
+    <h4>Copy my Kademlia Address:</h4>
+    <h5>YY3EVXAYrmDBLrfg9s4pntdcdzAKJreVSSqWR1AwGSjxS7X1xpq8</h5>
+    <h6 id="startWarning">select one room from the following list </h6>
+<!--    <dl id="roomlist"> Room List-->
+<!--      <dt>Coffee</dt>-->
+<!--      <dd>Black hot drink</dd>-->
+<!--      <dt>Milk</dt>-->
+<!--      <dd>White cold drink</dd>-->
+<!--    </dl>-->
   </body>
 </html>

@@ -174,11 +174,32 @@ const startBasicExample = () => {
     room.addEventListener('stream-subscribed', (streamEvent) => {
       const stream = streamEvent.stream;
       const div = document.createElement('div');
-      div.setAttribute('style', 'width: 320px; height: 240px;float:left;');
+        if (stream.hasVideo())
+      div.setAttribute('style', 'width: 320px; height: 240px;backgroud:yellow;float:left;');
+        else
+            div.setAttribute('style', 'width: 78px; height: 78px;backgroud:yellow;float:left;');
       div.setAttribute('id', `test${stream.getID()}`);
 
-      document.getElementById('videoContainer').appendChild(div);
-      stream.show(`test${stream.getID()}`);
+//      div.textContent=stream.getAttributes().actualName+"-"+stream.getAttributes().avatar;
+        if (stream.getAttributes().avatar && stream.hasVideo()==false) {
+            const img = document.createElement('img');
+            img.setAttribute('style', 'border-radius:50%;width: 78px; height: 78px;background:antiquewhite;float:left;');
+            img.setAttribute('id', stream.getAttributes().avatar);
+            img.setAttribute("src", "https://www.larvalabs.com/public/images/cryptopunks/punk" + stream.getAttributes().avatar + ".png")
+            //img.textContent=stream.getAttributes().actualName;
+            div.appendChild(img);
+        }
+        const label = document.createElement('label');
+        label.setAttribute('style', 'width: 78px; font-size:small;text-align:center;');
+        label.textContent=stream.getAttributes().actualName;
+//        div.appendChild("<label>"+stream.getAttributes().actualName+"</label>");
+        div.appendChild(label);
+        console.log(stream.hasVideo()+" video appaend:"+JSON.stringify(div));
+        document.getElementById('videoContainer').appendChild(div);
+        if (stream.hasVideo()) {
+            stream.show(`test${stream.getID()}`);
+            document.getElementById('videoContainer').setAttribute('style','background:lightcyan;width:100%;min-height: 260px');
+        }
       console.log(stream.getID()+':'+JSON.stringify(stream.getAttributes()));
     });
     room.addEventListener('user_connection', (event) => {
@@ -204,8 +225,15 @@ const startBasicExample = () => {
       const stream = streamEvent.stream;
       if (stream.elementID !== undefined) {
         const element = document.getElementById(stream.elementID);
+          if (element)
         document.getElementById('videoContainer').removeChild(element);
       }
+      else {
+          var element=document.getElementById('test'+streamEvent.stream.getID())
+          if (element)
+          document.getElementById('videoContainer').removeChild(element);
+      }
+      console.log(stream.getID()+':removed:'+JSON.stringify(stream.getAttributes()));
     });
 
     room.addEventListener('stream-failed', () => {
@@ -216,7 +244,7 @@ const startBasicExample = () => {
       room.connect({ singlePC: configFlags.singlePC });
     } else {
       const div = document.createElement('div');
-      div.setAttribute('style', 'width: 320px; height: 240px; float:left');
+      div.setAttribute('style', 'width: 320px; height: 240px; backgroud:lightgrey; float:left');
       div.setAttribute('id', 'myVideo');
       document.getElementById('videoContainer').appendChild(div);
 
