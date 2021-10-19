@@ -4,7 +4,7 @@
 /* eslint-env browser */
 /* eslint-disable no-param-reassign, no-console */
 
-//const serverUrl = 'https://t.callt.net:8030/';
+// const serverUrl = 'https://t.callt.net:8030/';
 const serverUrl = '/';
 let localStream;
 let room;
@@ -12,19 +12,23 @@ let recording = false;
 let recordingId = '';
 const configFlags = {
   noStart: false, // disable start button when only subscribe
-  forceStart: false, // force start button in all cases
+  forceStart: true, // force start button in all cases
   screen: false, // screensharinug
   room: 'basicExampleRoom', // room name
   singlePC: true,
   type: 'erizo', // room type
   onlyAudio: false,
   mediaConfiguration: 'default',
-  onlySubscribe: true,
+  onlySubscribe: false,
   onlyPublish: false,
   autoSubscribe: false,
   simulcast: false,
   unencrypted: false,
 };
+
+function addPreZero4(num){
+  return ('0000'+num).slice(-4);
+}
 
 const getParameterByName = (name) => {
   // eslint-disable-next-line
@@ -72,6 +76,7 @@ function startRecording() {
 }
 
 let slideShowMode = false;
+let isTalking = false;
 
 // eslint-disable-next-line no-unused-vars
 function toggleSlideShowMode() {
@@ -87,19 +92,40 @@ function toggleSlideShowMode() {
     }
   });
 }
+function stopConference() {
+  if (room) {
+    if (isTalking)
+      room.unpublish(localStream);
+//    room.unsubscribe();
+    room.disconnect();
+  }
+}
+function talkMode() {
+  if (isTalking) {
+    room.unpublish(localStream);
+    document.getElementById('talkMode').textContent = "Talk";
+  }
+  else {
+    room.publish(localStream);
+    document.getElementById('talkMode').textContent = "Quiet";
+  }
+}
 
 const startBasicExample = () => {
-  document.getElementById('startButton').disabled = true;
-  document.getElementById('slideShowMode').disabled = false;
+  // document.getElementById('startButton').disabled = true;
+  // document.getElementById('slideShowMode').disabled = false;
+  document.getElementById('stopButton').disabled = true;
+  document.getElementById('talkMode').disabled = false;
   document.getElementById('startWarning').hidden = true;
   document.getElementById('startButton').hidden = true;
   recording = false;
   console.log('Selected Room', configFlags.room, 'of type', configFlags.type);
+  const name = addPreZero4(Math.round(Math.random() * 10000));
   const config = { audio: true,
-    video: !configFlags.onlyAudio,
+    video: false, //! configFlags.onlyAudio,
     data: true,
     screen: configFlags.screen,
-    attributes: {nickname:"web"+Math.random()} };
+    attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, name: `${name}` } };
   // If we want screen sharing we have to put our Chrome extension id.
   // The default one only works in our Lynckia test servers.
   // If we are not using chrome, the creation of the stream will fail regardless.
@@ -151,12 +177,20 @@ const startBasicExample = () => {
       streams.forEach((stream) => {
         if (localStream.getID() !== stream.getID()) {
           room.subscribe(stream, { slideShowMode, metadata: { type: 'subscriber' }, video: !configFlags.onlyAudio, encryptTransport: !configFlags.unencrypted });
+          //          room.subscribe(stream, { slideShowMode, metadata: { type: 'subscriber',nickname:"web"+name,actualName:"web"+name,avatar:name+"",id:name+"" }, video: !configFlags.onlyAudio, encryptTransport: !configFlags.unencrypted });
           stream.addEventListener('bandwidth-alert', cb);
-        }
+        } else { stream.setAttributes({ actualName: `web${name}`, avatar: `${name}`, name }); }
       });
     };
     room.on('connection-failed', console.log.bind(console));
 
+    room.addEventListener('room-disconnected', (roomEvent) => {
+      document.getElementById('startButton').hidden = false;
+      document.getElementById('startButton').disable = false;
+      document.getElementById('stopButton').disabled = true;
+      const element = document.getElementById('myAudio');
+      if (element) { document.getElementById('videoContainer').removeChild(element); }
+    });
     room.addEventListener('room-connected', (roomEvent) => {
       const options = { metadata: { type: 'publisher' } };
       if (configFlags.simulcast) options.simulcast = { numSpatialLayers: 3 };
@@ -164,91 +198,151 @@ const startBasicExample = () => {
       subscribeToStreams(roomEvent.streams);
 
       if (!configFlags.onlySubscribe) {
-        room.publish(localStream, options);
+        //        room.publish(localStream, options);
+        room.publish(localStream, { maxVideoBW: 300, handlerProfile: 0 });
+        localStream.addEventListener("stream-data", function(evt){
+          console.log('Received data ', evt.msg, 'from stream ', evt.stream.getAttributes().name);
+          $('#messages').append($('<li>').text(evt.msg));
+        });
+
+        localStream.sendData({text:"Hello, I am "+name});
+//        stream.sendData({text:'Hello', timestamp:12321312});
       }
       room.addEventListener('quality-level', (qualityEvt) => {
         console.log(`New Quality Event, connection quality: ${qualityEvt.message}`);
       });
+      document.getElementById('startButton').disable = true;
+      document.getElementById('stopButton').disabled = false;
+      $('form').submit(function(){
+        //socket.send($('#m').val());
+        //  $('#messages').append($('<li>').text(msg.sender+":"+msg.data));
+        $('#messages').append($('<li style="background-color: #00C0E0">').text('Me:'+$('#m').val()));
+        localStream.sendData({text:$('#m').val(),from:name});
+        $('#m').val('');
+        return false;
+      });
+
+
     });
 
     room.addEventListener('stream-subscribed', (streamEvent) => {
       const stream = streamEvent.stream;
       const div = document.createElement('div');
-        if (stream.hasVideo())
-      div.setAttribute('style', 'width: 320px; height: 240px;backgroud:yellow;float:left;');
-        else
-            div.setAttribute('style', 'width: 78px; height: 78px;backgroud:yellow;float:left;');
+      if (!stream.hasVideo()) {
+        div.setAttribute('style', 'width: 78px; height: 78px;backgroud:yellow;float:left;padding:5px');
+      } else {
+        div.setAttribute('style', 'width: 320px; height: 240px;backgroud:yellow;float:left;padding-left:5px');
+      }
       div.setAttribute('id', `test${stream.getID()}`);
 
-//      div.textContent=stream.getAttributes().actualName+"-"+stream.getAttributes().avatar;
-        if (stream.getAttributes().avatar && stream.hasVideo()==false) {
-            const img = document.createElement('img');
-            img.setAttribute('style', 'border-radius:50%;width: 78px; height: 78px;background:antiquewhite;float:left;');
-            img.setAttribute('id', stream.getAttributes().avatar);
-            img.setAttribute("src", "https://www.larvalabs.com/public/images/cryptopunks/punk" + stream.getAttributes().avatar + ".png")
-            //img.textContent=stream.getAttributes().actualName;
-            div.appendChild(img);
-        }
-        const label = document.createElement('label');
-        label.setAttribute('style', 'width: 78px; font-size:small;text-align:center;');
-        label.textContent=stream.getAttributes().actualName;
-//        div.appendChild("<label>"+stream.getAttributes().actualName+"</label>");
-        div.appendChild(label);
-        console.log(stream.hasVideo()+" video appaend:"+JSON.stringify(div));
-        document.getElementById('videoContainer').appendChild(div);
-        if (stream.hasVideo()) {
-            stream.show(`test${stream.getID()}`);
-            document.getElementById('videoContainer').setAttribute('style','background:lightcyan;width:100%;min-height: 260px');
-        }
-      console.log(stream.getID()+':'+JSON.stringify(stream.getAttributes()));
+      //      div.textContent=stream.getAttributes().actualName+"-"+stream.getAttributes().avatar;
+      if (stream.getAttributes().avatar && stream.hasVideo() === false) {
+        const img = document.createElement('img');
+        img.setAttribute('style', 'border-radius:50%;width: 78px; height: 78px;background:antiquewhite;float:left;');
+        img.setAttribute('id', stream.getAttributes().avatar);
+        img.setAttribute('src', `https://www.larvalabs.com/public/images/cryptopunks/punk${stream.getAttributes().avatar}.png`);
+        // img.textContent=stream.getAttributes().actualName;
+        div.appendChild(img);
+      }
+      const label = document.createElement('label');
+      label.setAttribute('style', 'width: 78px; font-size:small;text-align:center;');
+      label.textContent = stream.getAttributes().actualName;
+      //        div.appendChild("<label>"+stream.getAttributes().actualName+"</label>");
+      div.appendChild(label);
+      console.log(`${stream.hasVideo()} video appaend:${JSON.stringify(div)}`);
+      document.getElementById('videoContainer').appendChild(div);
+      stream.show(`test${stream.getID()}`);
+      if (stream.hasVideo()) {
+        document.getElementById('videoContainer').setAttribute('style', 'background:lightcyan;width:100%;min-height: 260px');
+      }
+      console.log(`${stream.getID()}:${JSON.stringify(stream.getAttributes())}`);
+      stream.addEventListener("stream-data", function(evt){
+        console.log('stream Received data ', evt.msg, 'from stream ', evt.stream.getAttributes().name);
+        $('#messages').append($('<li>').text(evt.msg.from+":"+evt.msg.text));
+      });
+
+    });
+    room.addEventListener('user_connection', (event) => {
+      console.log(`${'user_connection:' + ':'}${JSON.stringify(event)}`);
+    });
+    room.on('user_connection', (event) => {
+      console.log(`${'on user_connection:' + ':'}${JSON.stringify(event)}`);
     });
 
     room.addEventListener('stream-added', (streamEvent) => {
       const streams = [];
       streams.push(streamEvent.stream);
-      if (localStream) {
-        localStream.setAttributes({ type: 'publisher' });
-      }
+      const stream = streamEvent.stream;
+      console.log(`stream-added${stream.getID()}:${JSON.stringify(stream.getAttributes())}`);
+      // if (localStream) {
+      //   localStream.setAttributes({ type: 'publisher',nickname:"web"+name,actualName:"web"+name,avatar:name+"",id:stream.getID()+"" });
+      // }
       subscribeToStreams(streams);
-      document.getElementById('recordButton').disabled = false;
-    });
+//      document.getElementById('recordButton').disabled = false;
+      if (localStream.getID() === stream.getID()) {
+        document.getElementById('talkMode').disabled = false;
+        isTalking = true;
+      }
+      });
 
     room.addEventListener('stream-removed', (streamEvent) => {
       // Remove stream from DOM
       const stream = streamEvent.stream;
       if (stream.elementID !== undefined) {
         const element = document.getElementById(stream.elementID);
-          if (element)
-        document.getElementById('videoContainer').removeChild(element);
+        if (element) { document.getElementById('videoContainer').removeChild(element); }
+      } else {
+        const element = document.getElementById(`test${streamEvent.stream.getID()}`);
+        if (element) { document.getElementById('videoContainer').removeChild(element); }
       }
-      else {
-          var element=document.getElementById('test'+streamEvent.stream.getID())
-          if (element)
-          document.getElementById('videoContainer').removeChild(element);
+      console.log(`${stream.getID()}:removed:${JSON.stringify(stream.getAttributes())}`);
+      if (localStream.getID() === stream.getID()) {
+        const element = document.getElementById('myAudio');
+        if (element) { document.getElementById('videoContainer').removeChild(element); }
+        document.getElementById('talkMode').disabled = true;
+        isTalking = false;
       }
-      console.log(stream.getID()+':removed:'+JSON.stringify(stream.getAttributes()));
+
     });
 
     room.addEventListener('stream-failed', () => {
       console.log('Stream Failed, act accordingly');
     });
 
+
     if (configFlags.onlySubscribe) {
       room.connect({ singlePC: configFlags.singlePC });
     } else {
-      const div = document.createElement('div');
-      div.setAttribute('style', 'width: 320px; height: 240px; backgroud:lightgrey; float:left');
-      div.setAttribute('id', 'myVideo');
-      document.getElementById('videoContainer').appendChild(div);
-
       localStream.addEventListener('access-accepted', () => {
-        room.connect({ singlePC: configFlags.singlePC });
-        localStream.show('myVideo');
+        const div = document.createElement('div');
+        room.connect();
+        // room.connect({ singlePC: configFlags.singlePC });
+        if (localStream.hasVideo()) {
+          div.setAttribute('style', 'width: 320px; height: 240px; backgroud:lightgrey; float:left;padding-left:5px');
+          div.setAttribute('id', 'myVideo');
+          document.getElementById('videoContainer').appendChild(div);
+          localStream.show('myVideo');
+        } else {
+          div.setAttribute('style', 'width: 78px; height: 78px;backgroud:green;float:left;;padding:5px');
+          div.setAttribute('id', 'myAudio');
+          document.getElementById('videoContainer').appendChild(div);
+          const img = document.createElement('img');
+          img.setAttribute('style', 'border-radius:50%;width: 78px; height: 78px;background:lightblue;float:left;');
+          img.setAttribute('id', localStream.getAttributes().avatar);
+          img.setAttribute('src', `https://www.larvalabs.com/public/images/cryptopunks/punk${localStream.getAttributes().avatar}.png`);
+          // img.textContent=stream.getAttributes().actualName;
+          div.appendChild(img);
+          const label = document.createElement('label');
+          label.setAttribute('style', 'width: 78px; font-size:small;text-align:center;text-decoration-line: underline;font-weight: bold;');
+          label.textContent = localStream.getAttributes().actualName;
+          div.appendChild(label);
+          localStream.show('myAudio');
+        }
       });
       localStream.addEventListener('access-denied', () => {
-//        room.connect({ singlePC: configFlags.singlePC });
-//        localStream.show('myVideo');
-        console.log("access-denied");
+        //        room.connect({ singlePC: configFlags.singlePC });
+        //        localStream.show('myVideo');
+        console.log('access-denied');
       });
       localStream.init();
     }

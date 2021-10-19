@@ -1,7 +1,6 @@
 {
   "appenders": [
     {
-      // "type": "console",
       "type": "file",
       "filename":"basicsever.log",
       "layout": {

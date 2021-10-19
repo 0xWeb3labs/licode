@@ -30,6 +30,7 @@ N.API = (function (N) {
         if (!options) {
             options = {};
         }
+        console.log('createRoom'+":"+JSON.stringify(params));
 
         send(function (roomRtn) {
             var room = JSON.parse(roomRtn);
@@ -60,6 +61,7 @@ N.API = (function (N) {
     };
 
     createToken = function (room, username, role, callback, callbackError, params) {
+        console.log('createToken'+":"+JSON.stringify(params));
         send(callback, callbackError, 'POST', undefined, 'rooms/' + room + '/tokens',
              params, username, role);
     };
@@ -81,10 +83,12 @@ N.API = (function (N) {
     };
 
     getUsers = function (room, callback, callbackError, params) {
+        console.log('getUsers'+":"+JSON.stringify(params));
         send(callback, callbackError, 'GET', undefined, 'rooms/' + room + '/users/', params);
     };
 
     getUser = function (room, user, callback, callbackError, params) {
+        console.log('getUser'+":"+JSON.stringify(params));
         send(callback, callbackError, 'GET', undefined, 'rooms/' + room + '/users/' + user, params);
     };
 
@@ -168,9 +172,12 @@ N.API = (function (N) {
 
         req.setRequestHeader('Authorization', header);
 
+        console.log(method+":N.API.js:"+url);
+        console.log('Authorization:'+header);
         if (body !== undefined) {
             req.setRequestHeader('Content-Type', 'application/json');
             req.send(JSON.stringify(body));
+            console.log(":N.API.js body:"+JSON.stringify(body));
         } else {
             req.send();
         }
