@@ -4,19 +4,33 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
     <title>Kademlia Web For Testing</title>
     <script type="text/javascript" src="erizo.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js" rel="external nofollow" ></script>
     <script type="text/javascript" src="script.js"></script>
   </head>
 
   <body>
   <h3 style="text-align: center">Conference Room for Communities</h3>
-  <p style="text-align: center">DEFI, NFT and blockchains</p>
+  <p style="text-align: center;margin-bottom: 0px">DEFI, NFT and blockchains</p>
+  <dl style="margin-top:0px ">
+    <dt style="text-align: center">wallet address</dt>
+    <dt style="text-align: center">peer to peer network</dt>
+  </dl>
   <p>Press the start buttong to start receiving streams from the default room</p>
-    <button id="startButton" onclick="startBasicExample()" style="width: 20%;background:lightseagreen;color:white;padding: 5px" disabled>Start</button>
-    <button id="testConnection" onclick="testConnection()" style="width: 20%;padding: 5px;padding: 5px" >Publish</button>
-    <button id="recordButton" onclick="startRecording()" style="width: 20%;padding: 5px" disabled>Recording</button>
-    <button id="slideShowMode" onclick="toggleSlideShowMode()"  style="width: 20%;padding: 5px" disabled>Slide Show</button>
+  <p style="color: mediumvioletred">提示：微信里请先点击右上角 ··· 用手机浏览器打开</p>
+    <button id="startButton" onclick="startBasicExample()" style="width: 24%;background:lightseagreen;color:white;padding: 5px" disabled>Start</button>
+    <!--<button id="testConnection" onclick="testConnection()" style="width: 24%;padding: 5px;padding: 5px" >Publish</button>-->
+    <!--<button id="recordButton" onclick="startRecording()" style="width: 24%;padding: 5px" disabled>Recording</button>-->
+    <!--<button id="slideShowMode" onclick="toggleSlideShowMode()"  style="width: 24%;padding: 5px" disabled>Slide Show</button>-->
+    <button id="stopButton" onclick="stopConference()" style="width: 24%;padding: 5px" disabled>End</button>
+    <button id="talkMode" onclick="talkMode()"  style="width: 24%;padding: 5px" disabled>Quiet</button>
   <p>Speakers in the ROOM:</p>
   <div id="videoContainer" style="background:lightcyan;width:100%;min-height: 110px"></div>
+  <ul id="messages"></ul>
+  <form action="">
+    <input id="m" autocomplete="off" style="width: 80%"/><button>Send</button>
+  </form>
+  <script>
+  </script>
 
   <h3><a href="https://testflight.apple.com/join/IkiPHL8a" target="_blank">IOS App available for Testflight</a></h3>
     <img src="iphonekad.png" style="width: 200px;padding-left: 20%">
