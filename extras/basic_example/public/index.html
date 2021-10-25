@@ -10,8 +10,9 @@
 
   <body>
   <h3 style="text-align: center">Conference Room for Communities</h3>
-  <p style="text-align: center;margin-bottom: 0px">DEFI, NFT and blockchains</p>
   <dl style="margin-top:0px ">
+    <dt style="text-align: center">开会+好友+聊天</dt>
+    <dt style="text-align: center">DEFI, NFT and blockchains</dt>
     <dt style="text-align: center">wallet address</dt>
     <dt style="text-align: center">peer to peer network</dt>
   </dl>
@@ -23,25 +24,27 @@
     <!--<button id="slideShowMode" onclick="toggleSlideShowMode()"  style="width: 24%;padding: 5px" disabled>Slide Show</button>-->
     <button id="stopButton" onclick="stopConference()" style="width: 24%;padding: 5px" disabled>End</button>
     <button id="talkMode" onclick="talkMode()"  style="width: 24%;padding: 5px" disabled>Quiet</button>
-  <p>Speakers in the ROOM:</p>
+  <p>Speakers in the ROOM:<label id="myroom"></label></p>
   <div id="videoContainer" style="background:lightcyan;width:100%;min-height: 110px"></div>
   <ul id="messages"></ul>
-  <form action="">
+  <form id="mform" action="">
     <input id="m" autocomplete="off" style="width: 80%"/><button>Send</button>
   </form>
-  <script>
-  </script>
+  <h6 id="startWarning">select one room from the following list </h6>
+  <form id="newroom" action="">
+    <input id='room' autocomplete="off" style="width: 60%"/><button>Create Room</button>
+  </form>
+      <dl id="roomlist"> Room List:
+        <!--<dt>Coffee</dt>-->
+        <!--<dd>Black hot drink</dd>-->
+        <!--<dt>Milk</dt>-->
+        <!--<dd>White cold drink</dd>-->
+      </dl>
 
-  <h3><a href="https://testflight.apple.com/join/IkiPHL8a" target="_blank">IOS App available for Testflight</a></h3>
+  <h3><a href="https://testflight.apple.com/join/IkiPHL8a" target="_blank">IOS App available for Testflight on IPhone and IPad</a></h3>
     <img src="iphonekad.png" style="width: 200px;padding-left: 20%">
     <h4>Copy my Kademlia Address:</h4>
     <h5>YY3EVXAYrmDBLrfg9s4pntdcdzAKJreVSSqWR1AwGSjxS7X1xpq8</h5>
-    <h6 id="startWarning">select one room from the following list </h6>
-<!--    <dl id="roomlist"> Room List-->
-<!--      <dt>Coffee</dt>-->
-<!--      <dd>Black hot drink</dd>-->
-<!--      <dt>Milk</dt>-->
-<!--      <dd>White cold drink</dd>-->
-<!--    </dl>-->
+  <a href="https://t.callt.net/" >more information about the project</a>
   </body>
 </html>

@@ -7,6 +7,7 @@
 // const serverUrl = 'https://t.callt.net:8030/';
 const serverUrl = '/';
 let localStream;
+let localStreamid;
 let room;
 let recording = false;
 let recordingId = '';
@@ -102,14 +103,35 @@ function stopConference() {
 }
 function talkMode() {
   if (isTalking) {
-    room.unpublish(localStream);
+//    isTalking = false;
+    room.unpublish(localStream,function (event) {
+      console.log(JSON.stringify(event));
+    });
     document.getElementById('talkMode').textContent = "Talk";
   }
   else {
     room.publish(localStream);
+//    isTalking=true;
     document.getElementById('talkMode').textContent = "Quiet";
   }
 }
+
+const getRooms = (callback)=>{
+  const req = new XMLHttpRequest();
+  const url = `${serverUrl}getRooms/`;
+
+  req.onreadystatechange = () => {
+    if (req.readyState === 4) {
+      if (callback)
+        callback(req.responseText);
+    }
+  };
+
+  console.log(url);
+  req.open('GET', url, true);
+//    req.setRequestHeader('Content-Type', 'application/json');
+  req.send();
+};
 
 const startBasicExample = () => {
   // document.getElementById('startButton').disabled = true;
@@ -213,7 +235,7 @@ const startBasicExample = () => {
       });
       document.getElementById('startButton').disable = true;
       document.getElementById('stopButton').disabled = false;
-      $('form').submit(function(){
+      $('#mform').submit(function(){
         //socket.send($('#m').val());
         //  $('#messages').append($('<li>').text(msg.sender+":"+msg.data));
         $('#messages').append($('<li style="background-color: #00C0E0">').text('Me:'+$('#m').val()));
@@ -282,6 +304,7 @@ const startBasicExample = () => {
       if (localStream.getID() === stream.getID()) {
         document.getElementById('talkMode').disabled = false;
         isTalking = true;
+        localStreamid = stream.getID();
       }
       });
 
@@ -296,7 +319,7 @@ const startBasicExample = () => {
         if (element) { document.getElementById('videoContainer').removeChild(element); }
       }
       console.log(`${stream.getID()}:removed:${JSON.stringify(stream.getAttributes())}`);
-      if (localStream.getID() === stream.getID()) {
+      if (localStream.getID() === stream.getID() || localStreamid===stream.getID()) {
         const element = document.getElementById('myAudio');
         if (element) { document.getElementById('videoContainer').removeChild(element); }
         document.getElementById('talkMode').disabled = true;
@@ -362,4 +385,35 @@ window.onload = () => {
   } else {
     document.getElementById('startButton').disabled = false;
   }
+  getRooms(function (roomlist) {
+    console.log(JSON.stringify(roomlist));
+    var rooms = JSON.parse(roomlist);
+    for (let i=0;i<rooms.length;i++) {
+      $('#roomlist')
+        .append($('<dt>')).append($('<a class="aaf" href="#">')
+          .text(rooms[i].name))
+      .append($('<dd>')
+          .text( rooms[i]._id));
+    }
+    $('.aaf').on("click",function(){
+      var text = $(this).text();  // 找到当前点击的dt下的a标签并获取其内容
+      $('#myroom').text(text);
+      configFlags.room=text;
+    })
+    $('#newroom').submit(function(){
+      let text = $('#room').val();
+      $('#roomlist')
+        .append($('<dt>')).append($('<a class="aaf" href="#">')
+        .text(text))
+      $('#myroom').text(text);
+      configFlags.room=text;
+      $('.aaf').on("click",function(){
+        var text = $(this).text();  // 找到当前点击的dt下的a标签并获取其内容
+        $('#myroom').text(text);
+        configFlags.room=text;
+      })
+      return false;
+    });
+
+  })
 };
