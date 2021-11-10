@@ -13,7 +13,7 @@ function printText(text) {
 
 window.onload = () => {
   const name = Math.round(Math.random()*1000);
-  const config = { audio: true, video: false, data: true, videoSize: [640, 480, 640, 480],attributes: {avatar:name+"",id:name+"",actualName:"KADWEB"+name, name:"Test Connection "+name }};
+  const config = { audio: true, video: true, data: true, videoSize: [640, 480, 640, 480],attributes: {avatar:name+"",id:name+"",actualName:"KADWEB"+name, name:"Test Connection "+name }};
   localStream = Erizo.Stream(config);
   const createToken = (userName, role, callback) => {
     const req = new XMLHttpRequest();

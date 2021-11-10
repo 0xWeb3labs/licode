@@ -15,12 +15,13 @@ const configFlags = {
   noStart: false, // disable start button when only subscribe
   forceStart: true, // force start button in all cases
   screen: false, // screensharinug
-  room: 'basicExampleRoom', // room name
+  room: '会客室',//'basicExampleRoom', // room name
+  roomId:'6180dae0d4edf07e00e3d70a',
   singlePC: true,
   type: 'erizo', // room type
-  onlyAudio: false,
+  onlyAudio: true,
   mediaConfiguration: 'default',
-  onlySubscribe: false,
+  onlySubscribe: true,
   onlyPublish: false,
   autoSubscribe: false,
   simulcast: false,
@@ -102,17 +103,29 @@ function stopConference() {
   }
 }
 function talkMode() {
-  if (isTalking) {
+  if (configFlags.onlySubscribe) {
 //    isTalking = false;
-    room.unpublish(localStream,function (event) {
-      console.log(JSON.stringify(event));
-    });
-    document.getElementById('talkMode').textContent = "Talk";
+//     room.unpublish(localStream,function (event) {
+//       console.log(JSON.stringify(event));
+//     });
+    configFlags.onlySubscribe = false;
+    document.getElementById('talkMode').textContent = "Speaker";
   }
   else {
-    room.publish(localStream);
+    // room.publish(localStream);
+    configFlags.onlySubscribe = true;
 //    isTalking=true;
-    document.getElementById('talkMode').textContent = "Quiet";
+    document.getElementById('talkMode').textContent = "Listener";
+  }
+}
+function cameraMode() {
+  if (configFlags.onlyAudio) {
+    configFlags.onlyAudio = false;
+    document.getElementById('cameraMode').textContent = "Video";
+  }
+  else {
+    configFlags.onlyAudio = true;
+    document.getElementById('cameraMode').textContent = "Audio";
   }
 }
 
@@ -143,16 +156,17 @@ const startBasicExample = () => {
   recording = false;
   console.log('Selected Room', configFlags.room, 'of type', configFlags.type);
   const name = addPreZero4(Math.round(Math.random() * 10000));
+//  const config = { audio: true, video: false, data: true, videoSize: [640, 480, 640, 480],attributes: {avatar:name+"",id:name+"",actualName:"KADWEB"+name, name:"Test Connection "+name }};
   const config = { audio: true,
-    video: false, //! configFlags.onlyAudio,
+    video: !configFlags.onlyAudio,
     data: true,
     screen: configFlags.screen,
-    attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, name: `${name}` } };
+    attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, id: `${name}`, name: `${name}` } };
   // If we want screen sharing we have to put our Chrome extension id.
   // The default one only works in our Lynckia test servers.
   // If we are not using chrome, the creation of the stream will fail regardless.
   if (configFlags.screen) {
-    // config.extensionId = 'okeephmleflklcdebijnponpabbmmgeo';
+     config.extensionId = 'okeephmleflklcdebijnponpabbmmgeo';
   }
   Erizo.Logger.setLogLevel(Erizo.Logger.TRACE);
   localStream = Erizo.Stream(config);
@@ -176,6 +190,7 @@ const startBasicExample = () => {
   const roomData = { username: `user ${parseInt(Math.random() * 100, 10)}`,
     role: 'presenter',
     room: configFlags.room,
+    roomId:configFlags.roomId,
     type: configFlags.type,
     mediaConfiguration: configFlags.mediaConfiguration };
 
@@ -322,7 +337,7 @@ const startBasicExample = () => {
       if (localStream.getID() === stream.getID() || localStreamid===stream.getID()) {
         const element = document.getElementById('myAudio');
         if (element) { document.getElementById('videoContainer').removeChild(element); }
-        document.getElementById('talkMode').disabled = true;
+//        document.getElementById('talkMode').disabled = true;
         isTalking = false;
       }
 
@@ -389,8 +404,9 @@ window.onload = () => {
     console.log(JSON.stringify(roomlist));
     var rooms = JSON.parse(roomlist);
     for (let i=0;i<rooms.length;i++) {
+      let ht='<a class="aaf" href="#" id=\"'+rooms[i]._id+'\">';
       $('#roomlist')
-        .append($('<dt>')).append($('<a class="aaf" href="#">')
+        .append($('<dt>')).append($(ht)
           .text(rooms[i].name))
       .append($('<dd>')
           .text( rooms[i]._id));
@@ -399,6 +415,9 @@ window.onload = () => {
       var text = $(this).text();  // 找到当前点击的dt下的a标签并获取其内容
       $('#myroom').text(text);
       configFlags.room=text;
+      let id = $(this).attr('id');
+      console.log(id);
+      configFlags.roomId=id;
     })
     $('#newroom').submit(function(){
       let text = $('#room').val();
