@@ -227,6 +227,9 @@ const startBasicExample = () => {
       document.getElementById('stopButton').disabled = true;
       const element = document.getElementById('myAudio');
       if (element) { document.getElementById('videoContainer').removeChild(element); }
+      $('#mform').submit(function(){
+        console.log('can not send:'+$('#m').val(''));
+      });
     });
     room.addEventListener('room-connected', (roomEvent) => {
       const options = { metadata: { type: 'publisher' } };
