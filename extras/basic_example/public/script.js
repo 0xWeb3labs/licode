@@ -253,6 +253,9 @@ const startBasicExample = () => {
       $('#mform').submit(function(){
         //socket.send($('#m').val());
         //  $('#messages').append($('<li>').text(msg.sender+":"+msg.data));
+        let msg=$('#m').val('');
+        if (msg=='' || msg.length<1)
+          return false;
         $('#messages').append($('<li style="background-color: #00C0E0">').text('Me:'+$('#m').val()));
         localStream.sendData({text:$('#m').val(),from:name});
         $('#m').val('');
