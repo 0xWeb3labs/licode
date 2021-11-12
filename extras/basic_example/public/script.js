@@ -16,7 +16,8 @@ const configFlags = {
   forceStart: true, // force start button in all cases
   screen: false, // screensharinug
   room: '会客室',//'basicExampleRoom', // room name
-  roomId:'6180dae0d4edf07e00e3d70a',
+//  roomId:'6180dae0d4edf07e00e3d70a',// node 001 - aliyun
+  roomId:'618e850a0a18f32177d55a80',// node 002 - aws
   singlePC: true,
   type: 'erizo', // room type
   onlyAudio: true,
