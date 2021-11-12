@@ -229,7 +229,7 @@ const startBasicExample = () => {
       const element = document.getElementById('myAudio');
       if (element) { document.getElementById('videoContainer').removeChild(element); }
       $('#mform').submit(function(){
-        console.log('can not send:'+$('#m').val(''));
+        console.log('can not send:'+$('#m').val());
       });
     });
     room.addEventListener('room-connected', (roomEvent) => {
@@ -257,7 +257,7 @@ const startBasicExample = () => {
       $('#mform').submit(function(){
         //socket.send($('#m').val());
         //  $('#messages').append($('<li>').text(msg.sender+":"+msg.data));
-        let msg=$('#m').val('');
+        let msg=$('#m').val();
         if (msg=='' || msg.length<1)
           return false;
         $('#messages').append($('<li style="background-color: #00C0E0">').text('Me:'+$('#m').val()));
