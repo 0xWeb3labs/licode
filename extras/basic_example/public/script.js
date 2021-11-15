@@ -249,9 +249,9 @@ const startBasicExample = () => {
         localStream.sendData({text:"Hello, I am "+name});
 //        stream.sendData({text:'Hello', timestamp:12321312});
         if (configFlags.onlySubscribe)
-          document.getElementById('talkMode').textContent = "Speaker";
-        else
           document.getElementById('talkMode').textContent = "Listener";
+        else
+          document.getElementById('talkMode').textContent = "Speaker";
         if (configFlags.onlyAudio) {
           document.getElementById('cameraMode').textContent = "Audio";
         }
