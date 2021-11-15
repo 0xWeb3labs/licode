@@ -22,7 +22,7 @@ const configFlags = {
   type: 'erizo', // room type
   onlyAudio: true,
   mediaConfiguration: 'default',
-  onlySubscribe: true,
+  onlySubscribe: false,
   onlyPublish: false,
   autoSubscribe: false,
   simulcast: false,
@@ -248,6 +248,17 @@ const startBasicExample = () => {
 
         localStream.sendData({text:"Hello, I am "+name});
 //        stream.sendData({text:'Hello', timestamp:12321312});
+        if (configFlags.onlySubscribe)
+          document.getElementById('talkMode').textContent = "Speaker";
+        else
+          document.getElementById('talkMode').textContent = "Listener";
+        if (configFlags.onlyAudio) {
+          document.getElementById('cameraMode').textContent = "Audio";
+        }
+        else {
+          document.getElementById('cameraMode').textContent = "Video";
+        }
+
       }
       room.addEventListener('quality-level', (qualityEvt) => {
         console.log(`New Quality Event, connection quality: ${qualityEvt.message}`);
