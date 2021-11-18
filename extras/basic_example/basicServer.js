@@ -91,6 +91,7 @@ const getOrCreateRoom = (name, type = 'erizo', mediaConfiguration = 'default',
     const rooms = JSON.parse(roomlist);
     for (let i = 0; i < rooms.length; i += 1) {
       const room = rooms[i];
+      console.log(i+':'+room.name+':'+room._id);
       if (room.name === name &&
                 room.data &&
                 room.data.basicExampleRoom) {
@@ -103,6 +104,7 @@ const getOrCreateRoom = (name, type = 'erizo', mediaConfiguration = 'default',
     if (type === 'p2p') extra.p2p = true;
 
     N.API.createRoom(name, (roomID) => {
+      console.log(name+' created:'+roomID._id);
       theRoom = roomID._id;
       callback(theRoom);
     }, () => {}, extra);
@@ -194,10 +196,10 @@ app.post('/createToken/', (req, res) => {
 
   const createToken = (tokenRoomId) => {
     N.API.createToken(tokenRoomId, username, role, (token) => {
-      log.debug('Token created', token);
+      log.debug(tokenRoomId+' Token created:', token);
       res.send(token);
     }, (error) => {
-      log.error('Error creating token', error);
+      log.error(room+'::'+tokenRoomId+':: Error creating token:', error);
       res.status(401).send('No Erizo Controller found');
     });
   };

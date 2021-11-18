@@ -7,6 +7,7 @@
 // const serverUrl = 'https://t.callt.net:8030/';
 const serverUrl = '/';
 let localStream;
+let localStreamid;
 let room;
 let recording = false;
 let recordingId = '';
@@ -14,10 +15,12 @@ const configFlags = {
   noStart: false, // disable start button when only subscribe
   forceStart: true, // force start button in all cases
   screen: false, // screensharinug
-  room: 'basicExampleRoom', // room name
+  room: '会客室',//'basicExampleRoom', // room name
+//  roomId:'6180dae0d4edf07e00e3d70a',// node 001 - aliyun
+  roomId:'618e850a0a18f32177d55a80',// node 002 - aws
   singlePC: true,
   type: 'erizo', // room type
-  onlyAudio: false,
+  onlyAudio: true,
   mediaConfiguration: 'default',
   onlySubscribe: false,
   onlyPublish: false,
@@ -101,15 +104,48 @@ function stopConference() {
   }
 }
 function talkMode() {
-  if (isTalking) {
-    room.unpublish(localStream);
-    document.getElementById('talkMode').textContent = "Talk";
+  if (configFlags.onlySubscribe) {
+//    isTalking = false;
+//     room.unpublish(localStream,function (event) {
+//       console.log(JSON.stringify(event));
+//     });
+    configFlags.onlySubscribe = false;
+    document.getElementById('talkMode').textContent = "Speaker";
   }
   else {
-    room.publish(localStream);
-    document.getElementById('talkMode').textContent = "Quiet";
+    // room.publish(localStream);
+    configFlags.onlySubscribe = true;
+//    isTalking=true;
+    document.getElementById('talkMode').textContent = "Listener";
   }
 }
+function cameraMode() {
+  if (configFlags.onlyAudio) {
+    configFlags.onlyAudio = false;
+    document.getElementById('cameraMode').textContent = "Video";
+  }
+  else {
+    configFlags.onlyAudio = true;
+    document.getElementById('cameraMode').textContent = "Audio";
+  }
+}
+
+const getRooms = (callback)=>{
+  const req = new XMLHttpRequest();
+  const url = `${serverUrl}getRooms/`;
+
+  req.onreadystatechange = () => {
+    if (req.readyState === 4) {
+      if (callback)
+        callback(req.responseText);
+    }
+  };
+
+  console.log(url);
+  req.open('GET', url, true);
+//    req.setRequestHeader('Content-Type', 'application/json');
+  req.send();
+};
 
 const startBasicExample = () => {
   // document.getElementById('startButton').disabled = true;
@@ -121,16 +157,17 @@ const startBasicExample = () => {
   recording = false;
   console.log('Selected Room', configFlags.room, 'of type', configFlags.type);
   const name = addPreZero4(Math.round(Math.random() * 10000));
+//  const config = { audio: true, video: false, data: true, videoSize: [640, 480, 640, 480],attributes: {avatar:name+"",id:name+"",actualName:"KADWEB"+name, name:"Test Connection "+name }};
   const config = { audio: true,
-    video: false, //! configFlags.onlyAudio,
+    video: !configFlags.onlyAudio,
     data: true,
     screen: configFlags.screen,
-    attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, name: `${name}` } };
+    attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, id: `${name}`, name: `${name}` } };
   // If we want screen sharing we have to put our Chrome extension id.
   // The default one only works in our Lynckia test servers.
   // If we are not using chrome, the creation of the stream will fail regardless.
   if (configFlags.screen) {
-    // config.extensionId = 'okeephmleflklcdebijnponpabbmmgeo';
+     config.extensionId = 'okeephmleflklcdebijnponpabbmmgeo';
   }
   Erizo.Logger.setLogLevel(Erizo.Logger.TRACE);
   localStream = Erizo.Stream(config);
@@ -154,6 +191,7 @@ const startBasicExample = () => {
   const roomData = { username: `用户 ${parseInt(Math.random() * 100, 10)}`,
     role: 'presenter',
     room: configFlags.room,
+    roomId:configFlags.roomId,
     type: configFlags.type,
     mediaConfiguration: configFlags.mediaConfiguration };
 
@@ -190,6 +228,9 @@ const startBasicExample = () => {
       document.getElementById('stopButton').disabled = true;
       const element = document.getElementById('myAudio');
       if (element) { document.getElementById('videoContainer').removeChild(element); }
+      $('#mform').submit(function(){
+        console.log('can not send:'+$('#m').val());
+      });
     });
     room.addEventListener('room-connected', (roomEvent) => {
       const options = { metadata: { type: 'publisher' } };
@@ -207,15 +248,29 @@ const startBasicExample = () => {
 
         localStream.sendData({text:"Hello, I am "+name});
 //        stream.sendData({text:'Hello', timestamp:12321312});
+        if (configFlags.onlySubscribe)
+          document.getElementById('talkMode').textContent = "Speaker";
+        else
+          document.getElementById('talkMode').textContent = "Listener";
+        if (configFlags.onlyAudio) {
+          document.getElementById('cameraMode').textContent = "Audio";
+        }
+        else {
+          document.getElementById('cameraMode').textContent = "Video";
+        }
+
       }
       room.addEventListener('quality-level', (qualityEvt) => {
         console.log(`New Quality Event, connection quality: ${qualityEvt.message}`);
       });
       document.getElementById('startButton').disable = true;
       document.getElementById('stopButton').disabled = false;
-      $('form').submit(function(){
+      $('#mform').submit(function(){
         //socket.send($('#m').val());
         //  $('#messages').append($('<li>').text(msg.sender+":"+msg.data));
+        let msg=$('#m').val();
+        if (msg=='' || msg.length<1)
+          return false;
         $('#messages').append($('<li style="background-color: #00C0E0">').text('Me:'+$('#m').val()));
         localStream.sendData({text:$('#m').val(),from:name});
         $('#m').val('');
@@ -282,6 +337,7 @@ const startBasicExample = () => {
       if (localStream.getID() === stream.getID()) {
         document.getElementById('talkMode').disabled = false;
         isTalking = true;
+        localStreamid = stream.getID();
       }
       });
 
@@ -296,10 +352,10 @@ const startBasicExample = () => {
         if (element) { document.getElementById('videoContainer').removeChild(element); }
       }
       console.log(`${stream.getID()}:removed:${JSON.stringify(stream.getAttributes())}`);
-      if (localStream.getID() === stream.getID()) {
+      if (localStream.getID() === stream.getID() || localStreamid===stream.getID()) {
         const element = document.getElementById('myAudio');
         if (element) { document.getElementById('videoContainer').removeChild(element); }
-        document.getElementById('talkMode').disabled = true;
+//        document.getElementById('talkMode').disabled = true;
         isTalking = false;
       }
 
@@ -362,4 +418,39 @@ window.onload = () => {
   } else {
     document.getElementById('startButton').disabled = false;
   }
+  getRooms(function (roomlist) {
+    console.log(JSON.stringify(roomlist));
+    var rooms = JSON.parse(roomlist);
+    for (let i=0;i<rooms.length;i++) {
+      let ht='<a class="aaf" href="#" id=\"'+rooms[i]._id+'\">';
+      $('#roomlist')
+        .append($('<dt>')).append($(ht)
+          .text(rooms[i].name))
+      .append($('<dd>')
+          .text( rooms[i]._id));
+    }
+    $('.aaf').on("click",function(){
+      var text = $(this).text();  // 找到当前点击的dt下的a标签并获取其内容
+      $('#myroom').text(text);
+      configFlags.room=text;
+      let id = $(this).attr('id');
+      console.log(id);
+      configFlags.roomId=id;
+    })
+    $('#newroom').submit(function(){
+      let text = $('#room').val();
+      $('#roomlist')
+        .append($('<dt>')).append($('<a class="aaf" href="#">')
+        .text(text))
+      $('#myroom').text(text);
+      configFlags.room=text;
+      $('.aaf').on("click",function(){
+        var text = $(this).text();  // 找到当前点击的dt下的a标签并获取其内容
+        $('#myroom').text(text);
+        configFlags.room=text;
+      })
+      return false;
+    });
+
+  })
 };
