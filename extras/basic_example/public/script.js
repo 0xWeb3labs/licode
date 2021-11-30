@@ -16,8 +16,8 @@ const configFlags = {
   forceStart: true, // force start button in all cases
   screen: false, // screensharinug
   room: '会客室',//'basicExampleRoom', // room name
-//  roomId:'6180dae0d4edf07e00e3d70a',// node 001 - aliyun
-  roomId:'618e850a0a18f32177d55a80',// node 002 - aws
+  roomId:'6180dae0d4edf07e00e3d70a',// node 001 - aliyun
+//  roomId:'618e850a0a18f32177d55a80',// node 002 - aws
   singlePC: true,
   type: 'erizo', // room type
   onlyAudio: true,
@@ -150,6 +150,7 @@ const getRooms = (callback)=>{
 const startBasicExample = () => {
   // document.getElementById('startButton').disabled = true;
   // document.getElementById('slideShowMode').disabled = false;
+  document.getElementById('recordButton').disabled = false;
   document.getElementById('stopButton').disabled = true;
   document.getElementById('talkMode').disabled = false;
   document.getElementById('startWarning').hidden = true;
@@ -157,6 +158,7 @@ const startBasicExample = () => {
   recording = false;
   console.log('Selected Room', configFlags.room, 'of type', configFlags.type);
   const name = addPreZero4(Math.round(Math.random() * 10000));
+  let music = document.getElementsByName("music");
 //  const config = { audio: true, video: false, data: true, videoSize: [640, 480, 640, 480],attributes: {avatar:name+"",id:name+"",actualName:"KADWEB"+name, name:"Test Connection "+name }};
   const config = { audio: true,
     video: !configFlags.onlyAudio,
@@ -166,6 +168,13 @@ const startBasicExample = () => {
   // If we want screen sharing we have to put our Chrome extension id.
   // The default one only works in our Lynckia test servers.
   // If we are not using chrome, the creation of the stream will fail regardless.
+  if (music)
+    for(let i=0; i<music.length; i++) {
+      if(music[i].checked) {    //获取复选框的状态，被选中时，该值为true
+//        config.url='file:///Users/liwei/Downloads/ch-loot-0902.m4a';
+        config.url='file:///sfu/licode/extras/basic_example/Kalimba8000.mkv';
+      }
+    }
   if (configFlags.screen) {
      config.extensionId = 'okeephmleflklcdebijnponpabbmmgeo';
   }
@@ -226,6 +235,7 @@ const startBasicExample = () => {
       document.getElementById('startButton').hidden = false;
       document.getElementById('startButton').disable = false;
       document.getElementById('stopButton').disabled = true;
+      document.getElementById('recordButton').disabled = true;
       const element = document.getElementById('myAudio');
       if (element) { document.getElementById('videoContainer').removeChild(element); }
       $('#mform').submit(function(){
@@ -265,6 +275,7 @@ const startBasicExample = () => {
       });
       document.getElementById('startButton').disable = true;
       document.getElementById('stopButton').disabled = false;
+      document.getElementById('recordButton').disabled = false;
       $('#mform').submit(function(){
         //socket.send($('#m').val());
         //  $('#messages').append($('<li>').text(msg.sender+":"+msg.data));
@@ -333,7 +344,7 @@ const startBasicExample = () => {
       //   localStream.setAttributes({ type: 'publisher',nickname:"web"+name,actualName:"web"+name,avatar:name+"",id:stream.getID()+"" });
       // }
       subscribeToStreams(streams);
-//      document.getElementById('recordButton').disabled = false;
+      document.getElementById('recordButton').disabled = false;
       if (localStream.getID() === stream.getID()) {
         document.getElementById('talkMode').disabled = false;
         isTalking = true;
