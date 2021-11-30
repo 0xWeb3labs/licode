@@ -426,11 +426,6 @@ window.onload = () => {
   window.configFlags = configFlags;
 //  roomId:'6180dae0d4edf07e00e3d70a',// node 001 - aliyun
 //  roomId:'618e850a0a18f32177d55a80',// node 002 - aws
-  if (location.host.inlucdes('kad.network'))
-    configFlags.roomId='618e850a0a18f32177d55a80';
-  else
-    if (location.host.inlucdes('callt.net'))
-      configFlags.roomId='6180dae0d4edf07e00e3d70a';
   const shouldSkipButton =
     !configFlags.forceStart &&
     (!configFlags.onlySubscribe || configFlags.noStart);
@@ -441,6 +436,12 @@ window.onload = () => {
     document.getElementById('startButton').disabled = false;
   }
   getRooms(function (roomlist) {
+      if (location && location.host && location.host.includes)
+      if (location.host.inlucdes('kad.network'))
+          configFlags.roomId='618e850a0a18f32177d55a80';
+      else
+      if (location.host.inlucdes('callt.net'))
+          configFlags.roomId='6180dae0d4edf07e00e3d70a';
     console.log(JSON.stringify(roomlist));
     var rooms = JSON.parse(roomlist);
     for (let i=0;i<rooms.length;i++) {
