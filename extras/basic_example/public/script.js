@@ -437,10 +437,10 @@ window.onload = () => {
   }
   getRooms(function (roomlist) {
       if (location && location.host && location.host.includes)
-      if (location.host.inlucdes('kad.network'))
+      if (location.host.includes('kad.network'))
           configFlags.roomId='618e850a0a18f32177d55a80';
       else
-      if (location.host.inlucdes('callt.net'))
+      if (location.host.includes('callt.net'))
           configFlags.roomId='6180dae0d4edf07e00e3d70a';
     console.log(JSON.stringify(roomlist));
     var rooms = JSON.parse(roomlist);
