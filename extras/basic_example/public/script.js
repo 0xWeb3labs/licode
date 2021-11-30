@@ -18,7 +18,7 @@ const configFlags = {
   room: '会客室',//'basicExampleRoom', // room name
 //  roomId:'6180dae0d4edf07e00e3d70a',// node 001 - aliyun
   roomId:'618e850a0a18f32177d55a80',// node 002 - aws
-  singlePC: true,
+  singlePC: false,
   type: 'erizo', // room type
   onlyAudio: true,
   mediaConfiguration: 'default',
@@ -220,7 +220,11 @@ const startBasicExample = () => {
         } else { stream.setAttributes({ actualName: `web${name}`, avatar: `${name}`, name }); }
       });
     };
-    room.on('connection-failed', console.log.bind(console));
+//    room.on('connection-failed', console.log.bind(console));
+    room.on('connection-failed', (roomEvent)=>{
+//      console.log.bind(console);
+      console.log('connection-failed:'+JSON.stringify(roomEvent));
+    });
 
     room.addEventListener('room-disconnected', (roomEvent) => {
       document.getElementById('startButton').hidden = false;
@@ -361,8 +365,9 @@ const startBasicExample = () => {
 
     });
 
-    room.addEventListener('stream-failed', () => {
+    room.addEventListener('stream-failed', (evt) => {
       console.log('Stream Failed, act accordingly');
+      console.log(JSON.stringify(evt));
     });
 
 
@@ -408,7 +413,13 @@ const startBasicExample = () => {
 window.onload = () => {
   fillInConfigFlagsFromParameters(configFlags);
   window.configFlags = configFlags;
-
+//  roomId:'6180dae0d4edf07e00e3d70a',// node 001 - aliyun
+//  roomId:'618e850a0a18f32177d55a80',// node 002 - aws
+  if (location.host.inlucdes('kad.network'))
+    configFlags.roomId='618e850a0a18f32177d55a80';
+  else
+    if (location.host.inlucdes('callt.net'))
+      configFlags.roomId='6180dae0d4edf07e00e3d70a';
   const shouldSkipButton =
     !configFlags.forceStart &&
     (!configFlags.onlySubscribe || configFlags.noStart);
