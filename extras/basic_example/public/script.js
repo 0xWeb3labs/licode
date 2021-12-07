@@ -6,6 +6,7 @@
 
 // const serverUrl = 'https://t.callt.net:8030/';
 const serverUrl = '/';
+//const serverUrl = 'https://licode.callpass.cn:3001/';
 let localStream;
 let localStreamid;
 let room;
@@ -160,11 +161,11 @@ const startBasicExample = () => {
   const name = addPreZero4(Math.round(Math.random() * 10000));
   let music = document.getElementsByName("music");
 //  const config = { audio: true, video: false, data: true, videoSize: [640, 480, 640, 480],attributes: {avatar:name+"",id:name+"",actualName:"KADWEB"+name, name:"Test Connection "+name }};
-  const config = { audio: true,
+  const config = { audio: !configFlags.onlySubscribe,//true,
     video: !configFlags.onlyAudio,
     data: true,
     screen: configFlags.screen,
-    attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, id: `${name}`, name: `${name}` } };
+    attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, id: `${name}`, name: `${name}` , speaker: !configFlags.onlySubscribe} };
   // If we want screen sharing we have to put our Chrome extension id.
   // The default one only works in our Lynckia test servers.
   // If we are not using chrome, the creation of the stream will fail regardless.
@@ -252,7 +253,7 @@ const startBasicExample = () => {
       options.encryptTransport = !configFlags.unencrypted;
       subscribeToStreams(roomEvent.streams);
 
-      if (!configFlags.onlySubscribe) {
+      if (!configFlags.onlySubscribe || config.data) {
         //        room.publish(localStream, options);
         room.publish(localStream, { maxVideoBW: 300, handlerProfile: 0 });
         localStream.addEventListener("stream-data", function(evt){
