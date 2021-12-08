@@ -293,15 +293,15 @@ const startBasicExample = () => {
 
         localStream.sendData({text:"Hello, I am "+name});
 //        stream.sendData({text:'Hello', timestamp:12321312});
-        if (configFlags.onlySubscribe)
-          document.getElementById('talkMode').textContent = "Listener";
+        if (configFlags.microphone)
+          document.getElementById('talkMode').textContent = "Mute";
         else
-          document.getElementById('talkMode').textContent = "Speaker";
-        if (configFlags.onlyAudio) {
-          document.getElementById('cameraMode').textContent = "Audio";
+          document.getElementById('talkMode').textContent = "Cancel Mute";
+        if (configFlags.Camera) {
+          document.getElementById('cameraMode').textContent = "Close Camera";
         }
         else {
-          document.getElementById('cameraMode').textContent = "Video";
+          document.getElementById('cameraMode').textContent = "Open Camera";
         }
 
       }
