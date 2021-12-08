@@ -28,6 +28,9 @@ const configFlags = {
   autoSubscribe: false,
   simulcast: false,
   unencrypted: false,
+    data:true,
+    microphone:false,
+    camera:false,
 };
 
 function addPreZero4(num){
@@ -105,32 +108,57 @@ function stopConference() {
   }
 }
 function talkMode() {
-  if (configFlags.onlySubscribe) {
+  if (configFlags.microphone)
+  if (!localStream.audioMuted)
+  {
 //    isTalking = false;
 //     room.unpublish(localStream,function (event) {
 //       console.log(JSON.stringify(event));
 //     });
-    configFlags.onlySubscribe = false;
-    document.getElementById('talkMode').textContent = "Speaker";
+//    configFlags.microphone = false;
+    localStream.muteAudio(true);
+    document.getElementById('talkMode').textContent = "Cancel Mute";
   }
   else {
     // room.publish(localStream);
-    configFlags.onlySubscribe = true;
+//    configFlags.microphone = true;
+      localStream.muteAudio(false);
 //    isTalking=true;
-    document.getElementById('talkMode').textContent = "Listener";
+    document.getElementById('talkMode').textContent = "Mute";
   }
 }
 function cameraMode() {
-  if (configFlags.onlyAudio) {
-    configFlags.onlyAudio = false;
-    document.getElementById('cameraMode').textContent = "Video";
+  if (configFlags.camera)
+  if (localStream.videoMuted)
+  {
+    localStream.muteVideo(false);
+    document.getElementById('cameraMode').textContent = "Close Camera";
   }
   else {
-    configFlags.onlyAudio = true;
-    document.getElementById('cameraMode').textContent = "Audio";
+//    configFlags.onlyAudio = true;
+      localStream.muteVideo(true);
+    document.getElementById('cameraMode').textContent = "Open Camera";
   }
 }
+function onChangeCheckbox(el) {
+    switch (el.value) {
+        case '1':
+            configFlags.microphone=el.checked;
+            break;
+        case '2':
+            configFlags.camera=el.checked;
+            break;
+        case '3':
+            configFlags.data=el.checked;
+            break;
+        case '4':
+            configFlags.music=el.checked;
+            break;
+        default:
+            break;
 
+    }
+}
 const getRooms = (callback)=>{
   const req = new XMLHttpRequest();
   const url = `${serverUrl}getRooms/`;
@@ -161,9 +189,9 @@ const startBasicExample = () => {
   const name = addPreZero4(Math.round(Math.random() * 10000));
   let music = document.getElementsByName("music");
 //  const config = { audio: true, video: false, data: true, videoSize: [640, 480, 640, 480],attributes: {avatar:name+"",id:name+"",actualName:"KADWEB"+name, name:"Test Connection "+name }};
-  const config = { audio: !configFlags.onlySubscribe,//true,
-    video: !configFlags.onlyAudio,
-    data: true,
+  const config = { audio: configFlags.microphone,//!configFlags.onlySubscribe,//true,
+    video: configFlags.camera,//!configFlags.onlyAudio,
+    data: configFlags.data,//true,
     screen: configFlags.screen,
     attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, id: `${name}`, name: `${name}` , speaker: !configFlags.onlySubscribe} };
   // If we want screen sharing we have to put our Chrome extension id.
@@ -243,9 +271,11 @@ const startBasicExample = () => {
       document.getElementById('recordButton').disabled = true;
       const element = document.getElementById('myAudio');
       if (element) { document.getElementById('videoContainer').removeChild(element); }
-      $('#mform').submit(function(){
-        console.log('can not send:'+$('#m').val());
-      });
+//       $('#mform').submit(function(event){
+//         console.log('can not send:'+$('#m').val());
+//           event.preventDefault();
+// //          return false;
+//       });
     });
     room.addEventListener('room-connected', (roomEvent) => {
       const options = { metadata: { type: 'publisher' } };
@@ -281,20 +311,21 @@ const startBasicExample = () => {
       document.getElementById('startButton').disable = true;
       document.getElementById('stopButton').disabled = false;
       document.getElementById('recordButton').disabled = false;
-      $('#mform').submit(function(){
-        //socket.send($('#m').val());
-        //  $('#messages').append($('<li>').text(msg.sender+":"+msg.data));
-        let msg=$('#m').val();
-        if (msg=='' || msg.length<1)
-          return false;
-        $('#messages').append($('<li style="background-color: #00C0E0">').text('Me:'+$('#m').val()));
-        localStream.sendData({text:$('#m').val(),from:name});
-        $('#m').val('');
-        return false;
-      });
-
-
     });
+
+      $('#mform').submit(function(event){
+          //socket.send($('#m').val());
+          //  $('#messages').append($('<li>').text(msg.sender+":"+msg.data));
+          let msg=$('#m').val();
+          if (msg=='' || msg.length<1)
+              return false;
+          $('#messages').append($('<li style="background-color: #00C0E0">').text('Me:'+$('#m').val()));
+          if (localStream.hasData())
+              localStream.sendData({text:$('#m').val(),from:name});
+          $('#m').val('');
+          event.preventDefault();
+          return false;
+      });
 
     room.addEventListener('stream-subscribed', (streamEvent) => {
       const stream = streamEvent.stream;
@@ -416,6 +447,7 @@ const startBasicExample = () => {
         //        room.connect({ singlePC: configFlags.singlePC });
         //        localStream.show('myVideo');
         console.log('access-denied');
+        room.disconnect();
       });
       localStream.init();
     }
@@ -436,6 +468,9 @@ window.onload = () => {
   } else {
     document.getElementById('startButton').disabled = false;
   }
+    document.getElementById("microphone").checked=configFlags.microphone;
+    document.getElementById("camera").checked=configFlags.camera;
+    document.getElementById("data").checked=configFlags.data;
   getRooms(function (roomlist) {
       if (location && location.host && location.host.includes)
       if (location.host.includes('kad.network'))
@@ -444,6 +479,8 @@ window.onload = () => {
       if (location.host.includes('callt.net'))
           configFlags.roomId='6180dae0d4edf07e00e3d70a';
     console.log(JSON.stringify(roomlist));
+    if (roomlist.startsWith('<!'))
+        return;
     var rooms = JSON.parse(roomlist);
     for (let i=0;i<rooms.length;i++) {
       let ht='<a class="aaf" href="#" id=\"'+rooms[i]._id+'\">';

@@ -18,14 +18,18 @@
   </dl>
   <p>Press the start buttong to start receiving streams from the default room</p>
   <p style="color: mediumvioletred">提示：微信里请先点击右上角 ··· 用手机浏览器打开</p>
-  <td><input type="CheckBox" name="music" value="1"/>music</td>
-    <button id="startButton" onclick="startBasicExample()" style="width: 20%;background:lightseagreen;color:white;padding: 5px" disabled>Start</button>
+  <td><input type="CheckBox" id="microphone" value="1" onchange="onChangeCheckbox(this)"/>microphone</td>
+  <td><input type="CheckBox" id="camera" value="2"/>camera</td>
+  <td><input type="CheckBox" id="data" value="3"/>data</td>
+  <td><input type="CheckBox" id="music" name="music" value="4"/>music</td>
+  <p></p>
+  <button id="startButton" onclick="startBasicExample()" style="width: 18%;background:lightseagreen;color:white;padding: 5px" disabled>Start</button>
     <!--<button id="testConnection" onclick="testConnection()" style="width: 24%;padding: 5px;padding: 5px" >Publish</button>-->
-    <button id="recordButton" onclick="startRecording()" style="width: 24%;padding: 5px" disabled>Recording</button>
     <!--<button id="slideShowMode" onclick="toggleSlideShowMode()"  style="width: 24%;padding: 5px" disabled>Slide Show</button>-->
-    <button id="stopButton" onclick="stopConference()" style="width: 20%;padding: 5px" disabled>End</button>
-    <button id="talkMode" onclick="talkMode()"  style="width: 24%;padding: 5px" >Listen</button>
-    <button id="cameraMode" onclick="cameraMode()"  style="width: 24%;padding: 5px" >Audio</button>
+    <button id="stopButton" onclick="stopConference()" style="width: 18%;padding: 5px" disabled>End</button>
+    <button id="talkMode" onclick="talkMode()"  style="width: 18%;padding: 5px" >Mute</button>
+    <button id="cameraMode" onclick="cameraMode()"  style="width: 18%;padding: 5px" >Video</button>
+    <button id="recordButton" onclick="startRecording()" style="width: 18%;padding: 5px" disabled>Recording</button>
   <p>Speakers in the ROOM:<label id="myroom"></label></p>
   <div id="videoContainer" style="background:lightcyan;width:100%;min-height: 110px"></div>
   <ul id="messages"></ul>
