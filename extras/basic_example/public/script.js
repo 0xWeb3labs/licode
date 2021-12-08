@@ -101,14 +101,51 @@ function toggleSlideShowMode() {
 }
 function stopConference() {
   if (room) {
-    if (isTalking)
+    if (isTalking && localStream.getID())
       room.unpublish(localStream);
 //    room.unsubscribe();
     room.disconnect();
   }
 }
 function talkMode() {
-  if (configFlags.microphone)
+  if (!configFlags.microphone && localStream.getID()){
+      configFlags.microphone = true;
+      document.getElementById("microphone").checked=configFlags.microphone;
+      room.unpublish(localStream,function (event) {
+        console.log(JSON.stringify(event));
+      });
+      localStream.close();
+      const config = { audio: configFlags.microphone,//!configFlags.onlySubscribe,//true,
+          video: configFlags.camera,//!configFlags.onlyAudio,
+          data: configFlags.data,//true,
+          screen: configFlags.screen,
+          attributes: { nickname: `web${name}`, actualName: `web${name}`, avatar: `${name}`, id: `${name}`, name: `${name}` , speaker: !configFlags.onlySubscribe} };
+      localStream = Erizo.Stream(config);
+      window.localStream = localStream;
+      localStream.addEventListener('access-accepted', () => {
+          room.publish(localStream, {maxVideoBW: 300, handlerProfile: 0}, function (id, error) {
+              if (id === undefined) {
+                  console.log("Error publishing stream", error);
+              } else {
+                  console.log("Published stream", id);
+              }
+          });
+          localStream.show('myAudio');
+          localStream.addEventListener("stream-data", function (evt) {
+              console.log('Received data ', evt.msg, 'from stream ', evt.stream.getAttributes().name);
+              $('#messages').append($('<li>').text(evt.msg));
+          });
+      });
+      localStream.addEventListener('access-denied', () => {
+          //        room.connect({ singlePC: configFlags.singlePC });
+          //        localStream.show('myVideo');
+          console.log('access-denied');
+//          room.disconnect();
+      });
+      localStream.init();
+      return;
+  }
+
   if (!localStream.audioMuted)
   {
 //    isTalking = false;
@@ -176,6 +213,8 @@ const getRooms = (callback)=>{
   req.send();
 };
 
+const name = addPreZero4(Math.round(Math.random() * 10000));
+
 const startBasicExample = () => {
   // document.getElementById('startButton').disabled = true;
   // document.getElementById('slideShowMode').disabled = false;
@@ -186,7 +225,6 @@ const startBasicExample = () => {
   document.getElementById('startButton').hidden = true;
   recording = false;
   console.log('Selected Room', configFlags.room, 'of type', configFlags.type);
-  const name = addPreZero4(Math.round(Math.random() * 10000));
   let music = document.getElementsByName("music");
 //  const config = { audio: true, video: false, data: true, videoSize: [640, 480, 640, 480],attributes: {avatar:name+"",id:name+"",actualName:"KADWEB"+name, name:"Test Connection "+name }};
   const config = { audio: configFlags.microphone,//!configFlags.onlySubscribe,//true,
