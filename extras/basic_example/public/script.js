@@ -5,7 +5,7 @@
 /* eslint-disable no-param-reassign, no-console */
 
 // const serverUrl = 'https://t.callt.net:8030/';
-const serverUrl = '/';
+const serverUrl = 'http://localhost:3001/';
 // const serverUrl = 'https://licode.callpass.cn:3001/';
 let localStream;
 let localStreamid;
@@ -259,7 +259,8 @@ const startBasicExample = () => {
   window.localStream = localStream;
   const createToken = (roomData, callback) => {
     const req = new XMLHttpRequest();
-    const url = `${serverUrl}createToken/`;
+//    const url = `${serverUrl}createToken/`;
+    const url = `http://localhost:10086/joinRoom`;
 
     req.onreadystatechange = () => {
       if (req.readyState === 4) {

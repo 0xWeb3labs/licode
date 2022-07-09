@@ -25,8 +25,10 @@ config.cloudProvider.name = '';
 config.nuve = {};
 config.nuve.dataBaseURL = "mongodb://192.168.0.176/nuvedb"; // default value: "mongodb://localhost/nuvedb"
 config.nuve.dataBaseName = 'nuvedb'; // default value: 'nuvedb'
-config.nuve.superserviceID = '60bdc6d6ec4eb74d97424273'; // default value: ''
-config.nuve.superserviceKey = '25729'; // default value: ''
+//config.nuve.superserviceID = '60bdc6d6ec4eb74d97424273'; // default value: ''
+//config.nuve.superserviceKey = '25729'; // default value: ''
+config.nuve.superserviceID = '6189f089740edaf9c8e1c9bd'; // default value: ''
+config.nuve.superserviceKey = '31361'; // default value: ''
 config.nuve.testErizoController = '192.168.0.176:8080'; // default value: 'localhost:8080'
 // Nuve Cloud Handler policies are in nuve/nuveAPI/ch_policies/ folder
 config.nuve.cloudHandlerPolicy = 'default_policy.js'; // default value: 'default_policy.js'
@@ -212,9 +214,10 @@ config.rov.statsPrefix = "licode_";
  BASIC EXAMPLE CONFIGURATION
 **********************************************************/
 config.basicExample = {};
-config.basicExample.port = 3011;  // default value: 3001
-config.basicExample.tlsPort = 3014; // default value: 3004
-config.basicExample.nuveUrl = 'http://192.168.0.176:3000/';
+config.basicExample.port = 3001;  // default value: 3001
+config.basicExample.tlsPort = 3004; // default value: 3004
+//config.basicExample.nuveUrl = 'http://192.168.0.176:3000/';
+config.basicExample.nuveUrl = 'http://meeting.kad.network:3000/';
 config.basicExample.logger = {};
 config.basicExample.logger.configFile = './log4js_configuration.json'; // default value: "./log4js_configuration.json"
 
