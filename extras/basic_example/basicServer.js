@@ -181,6 +181,7 @@ app.get('/getUsers/:room', (req, res) => {
 
 app.post('/createToken/', (req, res) => {
   log.debug('Creating token. Request body: ', req.body);
+  console.log('Creating token. Request body: ', req.body);
 
   const username = req.body.username;
   const role = req.body.role;
@@ -198,9 +199,11 @@ app.post('/createToken/', (req, res) => {
   const createToken = (tokenRoomId) => {
     N.API.createToken(tokenRoomId, username, role, (token) => {
       log.debug(tokenRoomId+' Token created:', token);
+      console.log(tokenRoomId+' Token created:', token);
       res.send(token);
     }, (error) => {
       log.error(room+'::'+tokenRoomId+':: Error creating token:', error);
+      console.log(room+'::'+tokenRoomId+':: Error creating token:', error);
       res.status(401).send('No Erizo Controller found');
     });
   };
